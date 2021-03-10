@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package>
+  <name>srrg2_hipe</name>
+  <version>0.0.0</version>
+  <description>Hierarchical PosE graph initialization package</description>
+
+  <license>BSD-4</license>
+
+  <maintainer email="guadagnino@diag.uniroma1.it">Tiziano Guadagnino</maintainer>
+  <maintainer email="grisetti@diag.uniroma1.it">Giorgio Grisetti</maintainer>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>srrg2_core</build_depend>
+  <build_depend>srrg2_solver</build_depend>
+  <build_depend>srrg_cmake_modules</build_depend>
+
+  <run_depend>srrg2_core</run_depend>
+  <run_depend>srrg2_solver</run_depend>
+  <run_depend>srrg_cmake_modules</run_depend>
+
+</package>

@@ -1,0 +1,19 @@
+add_library(srrg2_splitting_library
+  isoperimetrical_bipartitioner.cpp
+  isoperimetrical_bipartitioner.h
+  isoperimetrical_splitter.cpp
+  isoperimetrical_splitter.h
+  nested_dissection_splitter.cpp
+  nested_dissection_splitter.h
+  breadth_first_splitter.cpp
+  breadth_first_splitter.h
+  partitions_optimization_tree.cpp
+  partitions_optimization_tree.h
+  odometry_propagation.cpp
+  odometry_propagation.h
+  instances.cpp
+  instances.h
+  )
+
+target_link_libraries(srrg2_splitting_library
+  srrg2_partition_library)
