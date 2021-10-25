@@ -23,7 +23,7 @@ RUN mkdir -p ${HOME}/workspace/src
 RUN git clone https://github.com/srrg-sapienza/srrg2_solver.git ${HOME}/workspace/src/srrg2_solver
 RUN git clone https://github.com/srrg-sapienza/srrg2_core.git ${HOME}/workspace/src/srrg2_core
 RUN git clone https://github.com/srrg-sapienza/srrg2_cmake_modules.git ${HOME}/workspace/src/srrg_cmake_modules
-# RUN git clone https://github.com/srrg-sapienza/srrg2-hipe.git ${HOME}/workspace/src/srrg2_hipe
+RUN git clone https://github.com/srrg-sapienza/srrg2-hipe.git ${HOME}/workspace/src/srrg2_hipe
 
 RUN python3 -m pip install osrf-pycommon
 RUN cd ${HOME}/workspace/src/srrg2_solver && rm -rf srrg2_solver_gui srrg2_solver_extras srrg2_solver_experiments
