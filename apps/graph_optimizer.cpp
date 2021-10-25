@@ -120,7 +120,6 @@ void generateConfig(const std::string& config_file_) {
   global_solver->setName("global_solver");
   global_solver->param_max_iterations.pushBack(10);
   global_solver->param_max_iterations.pushBack(10);
-  global_solver->param_robustifier_policies.pushBack(policy);
   global_solver->param_algorithm.setValue(dl);
 
   auto& partition_manager = optimizer->param_partition_manager.value();
@@ -138,6 +137,7 @@ void generateConfig(const std::string& config_file_) {
   partition_solver->param_max_iterations.pushBack(50);
   partition_solver->setName("partition_solver");
   partition_solver->param_algorithm.setValue(dl);
+  partition_solver->param_robustifier_policies.pushBack(policy);
 
   manager.write(config_file_);
   LOG << "created default configuration in [" << FG_YELLOW(config_file_) << "]\n";

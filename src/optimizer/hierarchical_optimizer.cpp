@@ -68,7 +68,7 @@ namespace srrg2_hipe {
     }
     initializeChordal(_graph);
     // tg optimize free variables
-    SolverPtr solver          = param_solver.value();
+    SolverPtr solver              = param_solver.value();
     int coarse_grained_iterations = solver->param_max_iterations.value(1);
     solver->param_max_iterations.setValue(1, 0);
     solver->setGraph(_graph);

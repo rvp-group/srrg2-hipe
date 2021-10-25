@@ -1,4 +1,5 @@
 #include "partition_manager.h"
+#include <chordal_types/chordal_initializer.h>
 
 namespace srrg2_hipe {
 
@@ -47,6 +48,7 @@ namespace srrg2_hipe {
     solver->setGraph(partition_);
     VariableBase* anchor = partition_->anchor();
     anchor->setStatus(VariableBase::Status::Fixed);
+    initializeChordal(partition_);
     // tg optimize partition
     solver->compute();
     // tg unlock hierarchical structure

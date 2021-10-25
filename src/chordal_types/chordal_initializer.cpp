@@ -45,6 +45,7 @@ namespace srrg2_hipe {
         chord_rotation_factor->setVariableId(0, f->variableId(0));
         chord_rotation_factor->setVariableId(1, f->variableId(1));
         chord_rotation_factor->setEnabled(f->enabled());
+        chord_rotation_factor->setInformationMatrix(se3->poseInformationMatrix());
         rotation_graph->addFactor(FactorBasePtr(chord_rotation_factor));
 
         SE3ChordalInitializationTranslationErrorFactor* chord_translation_factor =
@@ -53,6 +54,7 @@ namespace srrg2_hipe {
         chord_translation_factor->setVariableId(0, f->variableId(0));
         chord_translation_factor->setVariableId(1, f->variableId(1));
         chord_translation_factor->setEnabled(f->enabled());
+        chord_translation_factor->setInformationMatrix(se3->poseInformationMatrix());
         translation_graph->addFactor(FactorBasePtr(chord_translation_factor));
 
         pose_variables.insert(f->variableId(0));
@@ -69,6 +71,7 @@ namespace srrg2_hipe {
         chord_rotation_factor->setVariableId(0, f->variableId(0));
         chord_rotation_factor->setVariableId(1, f->variableId(1));
         chord_rotation_factor->setEnabled(f->enabled());
+        chord_rotation_factor->setInformationMatrix(se3_geo->informationMatrix());
         rotation_graph->addFactor(FactorBasePtr(chord_rotation_factor));
 
         SE3ChordalInitializationTranslationErrorFactor* chord_translation_factor =
@@ -77,6 +80,7 @@ namespace srrg2_hipe {
         chord_translation_factor->setVariableId(0, f->variableId(0));
         chord_translation_factor->setVariableId(1, f->variableId(1));
         chord_translation_factor->setEnabled(f->enabled());
+        chord_translation_factor->setInformationMatrix(se3_geo->informationMatrix());
         translation_graph->addFactor(FactorBasePtr(chord_translation_factor));
 
         pose_variables.insert(f->variableId(0));
@@ -109,14 +113,14 @@ namespace srrg2_hipe {
 
     Solver solver;
     solver.param_max_iterations.pushBack(1);
-    solver.param_algorithm.setValue(IterationAlgorithmBasePtr(new IterationAlgorithmLM));
+    // solver.param_algorithm.setValue(IterationAlgorithmBasePtr(new IterationAlgorithmLM));
     // std::shared_ptr<SimpleTerminationCriteria> term(new SimpleTerminationCriteria);
     // term->param_epsilon.setValue(1e-1);
     // solver.param_termination_criteria.setValue(term);
     solver.setGraph(rotation_graph);
     if (do_rotation) {
       solver.compute();
-      std::cerr << "chordalInitializer|Rotation" << solver.iterationStats() << std::endl;
+      // std::cerr << "chordalInitializer|Rotation" << solver.iterationStats() << std::endl;
     }
     for (const VariableBase::Id& id : pose_variables) {
       VariableBase* v      = graph->variable(id);
@@ -135,7 +139,7 @@ namespace srrg2_hipe {
     solver.setGraph(translation_graph);
     if (do_translation) {
       solver.compute();
-      std::cerr << "chordalInitializer|Translation" << solver.iterationStats() << std::endl;
+      // std::cerr << "chordalInitializer|Translation" << solver.iterationStats() << std::endl;
     }
     for (const VariableBase::Id& id : pose_variables) {
       VariableBase* v      = graph->variable(id);

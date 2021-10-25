@@ -1,5 +1,6 @@
 #include "nested_dissection_splitter.h"
 #include "partitions_optimization_tree.h"
+#include <srrg_solver/variables_and_factors/types_3d/instances.h>
 
 namespace srrg2_hipe {
   using namespace srrg2_core;
@@ -154,31 +155,27 @@ namespace srrg2_hipe {
       s->addVariable(vertex);
     }
     // prune separator tree (partitions)
-    _collapseSeparatorTreeNodes(partitions, parents.get());
+    // _collapseSeparatorTreeNodes(partitions, parents.get());
     // tg bookeeping variable partition
-    std::multimap<VariableBase::Id, int> variable_to_partition;
+    std::map<VariableBase::Id, int> variable_to_partition;
     for (const auto& comp_index_partition : partitions) {
       const int& c                  = comp_index_partition.first;
       const PartitionPtr& partition = comp_index_partition.second;
       for (const auto& id_variable : partition->variables()) {
         variable_to_partition.insert(std::make_pair(id_variable.first, c));
+        // assert(result.second && "NestedDissectionSplitter::compute| variable appear in multiple "
+        //                         "partitions after nested dissection algorithm");
       }
     }
     num_components = partitions.size();
     std::cerr << "NestedDissectionSplitter::compute| Graph partitioned in " << num_components
               << " partitions" << std::endl;
+    std::cerr << "NestedDissectionSplitter::compute| Num parents " << num_components
+              << " partitions" << std::endl;
     std::set<FactorBase::Id> processed_factors;
     // tg add factors and boundary variables to each partition
     for (auto& id_partition : partitions) {
-      int c                   = id_partition.first;
       PartitionPtr& partition = id_partition.second;
-      int parent_idx = parents[c];
-      auto it                 = partitions.find(parent_idx);
-      // check if the current partition is the root of the tree
-      PartitionPtr parent_partition = nullptr;
-      if (it != partitions.end()) {
-        parent_partition = it->second;
-      }
       // tg nested loop to check if any of the factor in the partition
       // has an end-point in the parent
       for (const auto& id_variable : partition->variables()) {
@@ -197,7 +194,6 @@ namespace srrg2_hipe {
               processed_factors.insert(f->graphId());
               break;
             case 2:
-              processed_factors.insert(f->graphId());
               VariableBase::Id v_id = v->graphId();
               // tg get the id of the other variable
               VariableBase::Id other_id =
@@ -205,41 +201,14 @@ namespace srrg2_hipe {
               // tg if both variable are in the same partition add the factor to it
               if (partition->variable(other_id)) {
                 partition->addGraphFactor(f);
-                // tg if it's connected to parent partition add boundary and put the factor in
-                // parent
-              } else if (parent_partition && parent_partition->variable(other_id)) {
-                parent_partition->addGraphFactor(f);
-                parent_partition->addVariable(v);
-                // add boundary variables to both partitions
-                partition->addBoundaryVariableIds(VariableIdSet{v_id});
-                parent_partition->addBoundaryVariableIds(VariableIdSet{v_id});
-                variable_to_partition.insert(std::make_pair(v_id, parent_idx));
-              } else if (variable_to_partition.count(other_id) == 1) {
-                auto it                       = variable_to_partition.find(other_id);
-                PartitionPtr& other_partition = partitions[it->second];
-                other_partition->addGraphFactor(f);
+              } else {
+                PartitionPtr other_partition = partitions.at(variable_to_partition.at(other_id));
                 other_partition->addVariable(v);
-                // add boundary variables to both partitions
+                other_partition->addGraphFactor(f);
                 partition->addBoundaryVariableIds(VariableIdSet{v_id});
                 other_partition->addBoundaryVariableIds(VariableIdSet{v_id});
-                variable_to_partition.insert(std::make_pair(v_id, it->second));
-              } else {
-                VariableBase* other_variable = _graph->variable(other_id);
-                partition->addGraphFactor(f);
-                partition->addVariable(other_variable);
-                partition->addBoundaryVariableIds(VariableIdSet{other_id});
-                auto partitions_with_other_variable = variable_to_partition.equal_range(other_id);
-                assert(
-                  partitions_with_other_variable.first != variable_to_partition.end() &&
-                  "NestedDissectionSplitter::compute| bookeeping variables to partition is broken");
-                for (auto s = partitions_with_other_variable.first;
-                     s != partitions_with_other_variable.second;
-                     ++s) {
-                  PartitionPtr& other_partition = partitions[s->second];
-                  other_partition->addBoundaryVariableIds(VariableIdSet{other_id});
-                }
-                variable_to_partition.insert(std::make_pair(other_id, c));
               }
+              processed_factors.insert(f->graphId());
               break;
           }
         }
@@ -250,18 +219,15 @@ namespace srrg2_hipe {
     for (auto& partition : partitions) {
       _determineAnchorAndAddToManager(partition.second);
     }
-    PartitionsOptimizationTree optimization_strategy;
-    optimization_strategy.setPartitionManager(_manager);
-    optimization_strategy.compute();
+    PartitionsOptimizationTree opt;
+    opt.setPartitionManager(_manager);
+    opt.compute();
   }
 
   void NestedDissectionSplitter::_determineAnchorAndAddToManager(PartitionPtr& partition_) {
     int max_degree = -1, degree = -1;
     VariableBase::Id anchor_id              = -1;
     const VariableIdSet& boundary_variables = partition_->boundaryVariableIds();
-    // std::cerr << "Boundary : " << boundary_variables.size() << " over " <<
-    // partition_->variables().size()
-    //           << std::endl;
     for (const auto& v_id : partition_->variables()) {
       if (boundary_variables.count(v_id.first)) {
         continue;
@@ -282,8 +248,10 @@ namespace srrg2_hipe {
       }
     }
     VariableBase* v_anchor = _graph->variable(anchor_id);
+    assert(v_anchor &&
+           "NestedDissectionSplitter::_determineAnchorAndAddToManager| anchor not found");
     partition_->setAnchor(v_anchor);
-    // _manager->addBoundaryVariablesToPartition(partition_, boundary_variables);
+    partition_->bindFactors();
     _manager->addPartition(partition_);
   }
 } // namespace srrg2_hipe

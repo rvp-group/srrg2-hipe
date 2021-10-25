@@ -26,29 +26,10 @@ namespace srrg2_hipe {
   }
 
   void SE3ChordalInitializationRotationErrorFactor::setInformationMatrix(const Matrix6f& omega) {
-    Matrix3f Rx0, Ry0, Rz0;
-    Rx0 << 0, 0, 0, 0, 0, -2, 0, 2, 0;
-    Ry0 << 0, 0, 2, 0, 0, 0, -2, 0, 0;
-    Rz0 << 0, -2, 0, 2, 0, 0, 0, 0, 0;
-    _information_matrix.setIdentity();
-    const Matrix3f& Rz = _measurement.linear();
-    JacobianType Je;
-    Je.setZero();
-    const Matrix3f dR_x = Rx0 * Rz;
-    const Matrix3f dR_y = Ry0 * Rz;
-    const Matrix3f dR_z = Rz0 * Rz;
-
-    Eigen::Matrix<float, 9, 1> dr_x_flattened, dr_y_flattened, dr_z_flattened;
-    dr_x_flattened << dR_x.col(0), dR_x.col(1), dR_x.col(2);
-    dr_y_flattened << dR_y.col(0), dR_y.col(1), dR_y.col(2);
-    dr_z_flattened << dR_z.col(0), dR_z.col(1), dR_z.col(2);
-
-    Je.block<9, 1>(0, 0) = dr_x_flattened;
-    Je.block<9, 1>(0, 1) = dr_y_flattened;
-    Je.block<9, 1>(0, 2) = dr_z_flattened;
-    auto Je_cross        = srrg2_core::pseudoInverse(Je);
-    const Matrix3f& omega_rot = omega.block<3, 3>(3, 3);
-    _information_matrix       = Je_cross.transpose() * omega_rot * Je_cross;
+    Matrix3f sigma        = omega.block<3, 3>(3, 3).inverse();
+    float sum_eigenvalues = sigma.trace();
+    float kappa           = 3 / (2 * sum_eigenvalues);
+    _information_matrix   = kappa * Matrix9f::Identity();
   }
 
   void SE3ChordalInitializationTranslationErrorFactor::errorAndJacobian(bool error_only) {

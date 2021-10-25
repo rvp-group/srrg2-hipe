@@ -7,8 +7,8 @@ namespace srrg2_hipe {
 
   class NestedDissectionSplitter : public SplitterBase {
   public:
-    using VariableIdIntMap  = std::unordered_map<VariableBase::Id, int>;
-    using IntVariableIdMap  = std::unordered_map<int, VariableBase::Id>;
+    using VariableIdIntMap       = std::unordered_map<VariableBase::Id, int>;
+    using IntVariableIdMap       = std::unordered_map<int, VariableBase::Id>;
     using ComponentIdToPartition = std::map<int, PartitionPtr>;
     NestedDissectionSplitter();
     ~NestedDissectionSplitter();

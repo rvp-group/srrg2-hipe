@@ -10,5 +10,6 @@ add_library(srrg2_partition_library
   )
 
 target_link_libraries(srrg2_partition_library
+  srrg2_chordal_library
   srrg2_solver_core_library
   srrg2_data_structures_library)

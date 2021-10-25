@@ -30,5 +30,4 @@ include_directories(
 link_directories(${catkin_LIBRARY_DIRS})
 
 add_subdirectory(src)
-add_subdirectory(examples)
 add_subdirectory(apps)
