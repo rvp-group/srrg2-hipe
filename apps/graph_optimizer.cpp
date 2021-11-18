@@ -78,7 +78,8 @@ int main(int argc, char** argv) {
 
   HierarchicalOptimizerPtr optimizer = manager.getByName<HierarchicalOptimizer>("optimizer");
   if (!optimizer) {
-    throw std::runtime_error(exe_name + "| ERROR, no CondensedGraphOptimizer was found in " +
+    throw std::runtime_error(exe_name +
+                             "| ERROR, no HierarchicalOptimizer was found in " +
                              param_config_file.value());
   }
   LOG << "Configuration in [ " << FG_YELLOW(param_config_file.value()) " ] loaded " << std::endl;
