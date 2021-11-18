@@ -9,7 +9,7 @@ exploiting a *maximum likelihood estimation* of this graph,
 **HiPE** can initialize the pose graph in a *non-linear* fashion. Further, the sparse structure of the coarse-grained representation enables an efficient initialization
 on large-scale problem instances without performance loses compared to [existing methods](https://www.cc.gatech.edu/~dellaert/ftp/Carlone15icra.pdf). 
 
-A detailed description of the algorithm and an analysis of its performances can be found in our [paper - **FILL ME**]
+A detailed description of the algorithm and an analysis of its performances can be found in our [paper](https://ieeexplore.ieee.org/document/9601288)
 
 ## Requirements
 
@@ -110,7 +110,7 @@ $ catkin build srrg2_hipe
    
 ## Datasets
 
-Within the repository we provide the datasets used for the comparative analysis in the [paper - **FILL ME**]. You can find those in the **/data** folder.
+Within the repository we provide the datasets used for the comparative analysis in the [paper](https://ieeexplore.ieee.org/document/9601288). You can find those in the **/data** folder.
 Furthermore, we provide two executables to convert a dataset from the *geodesic cost* to the *chordal cost* and viceversa:
 ```
 $ rosrun srrg2_hipe geodesic_to_chordal_converter -i geodesic_dataset.boss -o chordal_dataset.boss
@@ -121,18 +121,17 @@ $ rosrun srrg2_hipe chordal_to_geodesic_converter -i chordal_dataset.boss -o geo
 
 ## References
 
-We are making this software freely available in the hope that it will be useful to others. If you use **HiPE** in your own work, please [cite our paper - **FILL ME**].
+We are making this software freely available in the hope that it will be useful to others. If you use **HiPE** in your own research work, please cite:
 ```bibtex
-@article{Guadagnino2021HiPE,
-title = {HiPE: Hierarchical Initialization for Pose Graphs},
-author = {T. Guadagnino and L. Di Giammarino and G. Grisetti},
-journal = {**FILL ME**},
-volume = {38},
-number = {2--3},
-pages = {95--125},
-month = mar,
-year = {2019},
-}
+@ARTICLE{hipe2022guadagnino,
+  author={Guadagnino, Tiziano and Giammarino, Luca Di and Grisetti, Giorgio},
+  journal={IEEE Robotics and Automation Letters}, 
+  title={HiPE: Hierarchical Initialization for Pose Graphs}, 
+  year={2022},
+  volume={7},
+  number={1},
+  pages={287-294},
+  doi={10.1109/LRA.2021.3125046}}
 ```
 ## Copyright and License 
 
